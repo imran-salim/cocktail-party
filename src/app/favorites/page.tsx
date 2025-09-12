@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -74,9 +75,11 @@ export default function FavoritesPage() {
                   {favorites.map((cocktail) => (
                     <div key={cocktail.idDrink} className="group glass rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
                       <div className="relative overflow-hidden">
-                        <img
+                        <Image
                           src={cocktail.strDrinkThumb}
                           alt={cocktail.strDrink}
+                          width={400}
+                          height={224}
                           className="w-full h-56 object-cover transition-transform duration-700 group-hover:scale-110"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>

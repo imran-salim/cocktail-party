@@ -8,6 +8,10 @@ interface User {
   name: string;
 }
 
+interface StoredUser extends User {
+  password: string;
+}
+
 interface FavoriteCocktail {
   idDrink: string;
   strDrink: string;
@@ -86,8 +90,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Check stored users (in real app, this would be server-side)
-      const storedUsers = JSON.parse(localStorage.getItem('cocktail_users') || '[]');
-      const foundUser = storedUsers.find((u: any) => 
+      const storedUsers: StoredUser[] = JSON.parse(localStorage.getItem('cocktail_users') || '[]');
+      const foundUser = storedUsers.find((u: StoredUser) => 
         u.email === email && u.password === password
       );
       
@@ -129,8 +133,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Check if user already exists
-      const storedUsers = JSON.parse(localStorage.getItem('cocktail_users') || '[]');
-      const existingUser = storedUsers.find((u: any) => u.email === email);
+      const storedUsers: StoredUser[] = JSON.parse(localStorage.getItem('cocktail_users') || '[]');
+      const existingUser = storedUsers.find((u: StoredUser) => u.email === email);
       
       if (existingUser) {
         return false; // User already exists
