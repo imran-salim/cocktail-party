@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 
 interface User {
   id: string;
@@ -82,7 +82,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     checkAuth();
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = useCallback(async (email: string, password: string): Promise<boolean> => {
     try {
       setIsLoading(true);
       
@@ -123,9 +123,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const register = async (name: string, email: string, password: string): Promise<boolean> => {
+  const register = useCallback(async (name: string, email: string, password: string): Promise<boolean> => {
     try {
       setIsLoading(true);
       
@@ -172,33 +172,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     setUser(null);
     setFavorites([]);
     localStorage.removeItem('cocktail_user');
-  };
+  }, []);
 
-  const addToFavorites = (cocktail: FavoriteCocktail) => {
+  const addToFavorites = useCallback((cocktail: FavoriteCocktail) => {
     if (!user) return;
     
     const updatedFavorites = [...favorites, cocktail];
     setFavorites(updatedFavorites);
     localStorage.setItem(`cocktail_favorites_${user.id}`, JSON.stringify(updatedFavorites));
-  };
+  }, [user, favorites]);
 
-  const removeFromFavorites = (cocktailId: string) => {
+  const removeFromFavorites = useCallback((cocktailId: string) => {
     if (!user) return;
     
     const updatedFavorites = favorites.filter(fav => fav.idDrink !== cocktailId);
     setFavorites(updatedFavorites);
     localStorage.setItem(`cocktail_favorites_${user.id}`, JSON.stringify(updatedFavorites));
-  };
+  }, [user, favorites]);
 
-  const isFavorite = (cocktailId: string): boolean => {
+  const isFavorite = useCallback((cocktailId: string): boolean => {
     return favorites.some(fav => fav.idDrink === cocktailId);
-  };
+  }, [favorites]);
 
   const value: AuthContextType = useMemo(() => ({
     user,
