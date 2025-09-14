@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 
 interface Ingredient {
   strIngredient1: string;
@@ -37,6 +37,12 @@ export default function IngredientDropdown({ onIngredientSelect }: IngredientDro
 
     fetchIngredients();
   }, []);
+
+  const sortedIngredients = useMemo(() => {
+    return [...ingredients].sort((a, b) => 
+      a.strIngredient1.localeCompare(b.strIngredient1)
+    );
+  }, [ingredients]);
 
   const handleIngredientChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const ingredient = event.target.value;
@@ -87,7 +93,7 @@ export default function IngredientDropdown({ onIngredientSelect }: IngredientDro
                      hover:shadow-lg hover:scale-105 text-center"
         >
           <option value="">✨ Select an ingredient...</option>
-          {ingredients.map((ingredient, index) => (
+          {sortedIngredients.map((ingredient, index) => (
             <option key={index} value={ingredient.strIngredient1}>
               {ingredient.strIngredient1}
             </option>

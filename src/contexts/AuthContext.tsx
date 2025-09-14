@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 
 interface User {
   id: string;
@@ -200,7 +200,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return favorites.some(fav => fav.idDrink === cocktailId);
   };
 
-  const value: AuthContextType = {
+  const value: AuthContextType = useMemo(() => ({
     user,
     login,
     register,
@@ -210,7 +210,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     addToFavorites,
     removeFromFavorites,
     isFavorite
-  };
+  }), [user, isLoading, favorites, login, register, logout, addToFavorites, removeFromFavorites, isFavorite]);
 
   return (
     <AuthContext.Provider value={value}>

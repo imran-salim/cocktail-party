@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import IngredientDropdown from "@/components/IngredientDropdown";
@@ -64,6 +64,66 @@ export default function Home() {
       setLoading(false);
     }
   };
+
+  const cocktailGrid = useMemo(() => {
+    return cocktails.map((cocktail) => (
+      <div key={cocktail.idDrink} className="group glass rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+        <div className="relative overflow-hidden">
+          <Image
+            src={cocktail.strDrinkThumb}
+            alt={cocktail.strDrink}
+            width={400}
+            height={224}
+            className="w-full h-56 object-cover transition-transform duration-700 group-hover:scale-110"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          
+          {/* Favorite Button */}
+          <button
+            onClick={() => handleToggleFavorite(cocktail)}
+            className={`absolute top-3 right-3 w-10 h-10 glass rounded-full 
+                      flex items-center justify-center transition-all duration-300
+                      transform hover:scale-110 ${
+                        isFavorite(cocktail.idDrink) 
+                          ? 'text-red-500 hover:text-red-600' 
+                          : 'text-white/70 hover:text-red-500'
+                      }`}
+            title={isFavorite(cocktail.idDrink) ? "Remove from favorites" : "Add to favorites"}
+          >
+            <svg className="w-5 h-5" fill={isFavorite(cocktail.idDrink) ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+          </button>
+        </div>
+        <div className="p-6">
+          <h3 className="text-xl font-serif font-semibold text-foreground mb-4 group-hover:text-amber-600 transition-colors">
+            {cocktail.strDrink}
+          </h3>
+          <div className="flex items-center justify-between">
+            <button
+              onClick={() => window.open(`https://www.thecocktaildb.com/drink/${cocktail.idDrink}`, '_blank')}
+              className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-medium rounded-lg hover:from-amber-600 hover:to-amber-700 transition-all duration-300 shadow-lg hover:shadow-xl"
+            >
+              View Recipe
+              <svg className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+            
+            {/* Favorite Status */}
+            {isFavorite(cocktail.idDrink) && (
+              <span className="text-red-500 text-sm font-medium flex items-center">
+                <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                </svg>
+                Favorited
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    ));
+  }, [cocktails, isFavorite, handleToggleFavorite]);
 
   return (
     <ProtectedRoute>
@@ -160,63 +220,7 @@ export default function Home() {
                 </div>
               ) : cocktails.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {cocktails.map((cocktail) => (
-                    <div key={cocktail.idDrink} className="group glass rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
-                      <div className="relative overflow-hidden">
-                        <Image
-                          src={cocktail.strDrinkThumb}
-                          alt={cocktail.strDrink}
-                          width={400}
-                          height={224}
-                          className="w-full h-56 object-cover transition-transform duration-700 group-hover:scale-110"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        
-                        {/* Favorite Button */}
-                        <button
-                          onClick={() => handleToggleFavorite(cocktail)}
-                          className={`absolute top-3 right-3 w-10 h-10 glass rounded-full 
-                                    flex items-center justify-center transition-all duration-300
-                                    transform hover:scale-110 ${
-                                      isFavorite(cocktail.idDrink) 
-                                        ? 'text-red-500 hover:text-red-600' 
-                                        : 'text-white/70 hover:text-red-500'
-                                    }`}
-                          title={isFavorite(cocktail.idDrink) ? "Remove from favorites" : "Add to favorites"}
-                        >
-                          <svg className="w-5 h-5" fill={isFavorite(cocktail.idDrink) ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                          </svg>
-                        </button>
-                      </div>
-                      <div className="p-6">
-                        <h3 className="text-xl font-serif font-semibold text-foreground mb-4 group-hover:text-amber-600 transition-colors">
-                          {cocktail.strDrink}
-                        </h3>
-                        <div className="flex items-center justify-between">
-                          <button
-                            onClick={() => window.open(`https://www.thecocktaildb.com/drink/${cocktail.idDrink}`, '_blank')}
-                            className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-medium rounded-lg hover:from-amber-600 hover:to-amber-700 transition-all duration-300 shadow-lg hover:shadow-xl"
-                          >
-                            View Recipe
-                            <svg className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
-                          </button>
-                          
-                          {/* Favorite Status */}
-                          {isFavorite(cocktail.idDrink) && (
-                            <span className="text-red-500 text-sm font-medium flex items-center">
-                              <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
-                              </svg>
-                              Favorited
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                  {cocktailGrid}
                 </div>
               ) : (
                 <div className="text-center py-16">

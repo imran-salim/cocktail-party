@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -12,6 +12,52 @@ export default function FavoritesPage() {
   const handleRemoveFromFavorites = (cocktailId: string) => {
     removeFromFavorites(cocktailId);
   };
+
+  const favoritesGrid = useMemo(() => {
+    return favorites.map((cocktail) => (
+      <div key={cocktail.idDrink} className="group glass rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+        <div className="relative overflow-hidden">
+          <Image
+            src={cocktail.strDrinkThumb}
+            alt={cocktail.strDrink}
+            width={400}
+            height={224}
+            className="w-full h-56 object-cover transition-transform duration-700 group-hover:scale-110"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          
+          {/* Remove from Favorites Button */}
+          <button
+            onClick={() => handleRemoveFromFavorites(cocktail.idDrink)}
+            className="absolute top-3 right-3 w-10 h-10 glass rounded-full 
+                      flex items-center justify-center text-red-500 
+                      hover:bg-red-500 hover:text-white transition-all duration-300
+                      transform hover:scale-110"
+            title="Remove from favorites"
+          >
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+            </svg>
+          </button>
+        </div>
+        
+        <div className="p-6">
+          <h3 className="text-xl font-serif font-semibold text-foreground mb-4 group-hover:text-amber-600 transition-colors">
+            {cocktail.strDrink}
+          </h3>
+          <button
+            onClick={() => window.open(`https://www.thecocktaildb.com/drink/${cocktail.idDrink}`, '_blank')}
+            className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-medium rounded-lg hover:from-amber-600 hover:to-amber-700 transition-all duration-300 shadow-lg hover:shadow-xl"
+          >
+            View Recipe
+            <svg className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    ));
+  }, [favorites, handleRemoveFromFavorites]);
 
   return (
     <ProtectedRoute>
@@ -72,49 +118,7 @@ export default function FavoritesPage() {
             {favorites.length > 0 ? (
               <section className="mb-12">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {favorites.map((cocktail) => (
-                    <div key={cocktail.idDrink} className="group glass rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
-                      <div className="relative overflow-hidden">
-                        <Image
-                          src={cocktail.strDrinkThumb}
-                          alt={cocktail.strDrink}
-                          width={400}
-                          height={224}
-                          className="w-full h-56 object-cover transition-transform duration-700 group-hover:scale-110"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        
-                        {/* Remove from Favorites Button */}
-                        <button
-                          onClick={() => handleRemoveFromFavorites(cocktail.idDrink)}
-                          className="absolute top-3 right-3 w-10 h-10 glass rounded-full 
-                                    flex items-center justify-center text-red-500 
-                                    hover:bg-red-500 hover:text-white transition-all duration-300
-                                    transform hover:scale-110"
-                          title="Remove from favorites"
-                        >
-                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
-                          </svg>
-                        </button>
-                      </div>
-                      
-                      <div className="p-6">
-                        <h3 className="text-xl font-serif font-semibold text-foreground mb-4 group-hover:text-amber-600 transition-colors">
-                          {cocktail.strDrink}
-                        </h3>
-                        <button
-                          onClick={() => window.open(`https://www.thecocktaildb.com/drink/${cocktail.idDrink}`, '_blank')}
-                          className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-medium rounded-lg hover:from-amber-600 hover:to-amber-700 transition-all duration-300 shadow-lg hover:shadow-xl"
-                        >
-                          View Recipe
-                          <svg className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                  {favoritesGrid}
                 </div>
               </section>
             ) : (
