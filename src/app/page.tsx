@@ -45,6 +45,8 @@ export default function Home() {
     setSelectedIngredient(ingredient);
     if (ingredient) {
       fetchCocktailsByIngredient(ingredient);
+    } else {
+      setCocktails([]);
     }
   }, [fetchCocktailsByIngredient]);
 
