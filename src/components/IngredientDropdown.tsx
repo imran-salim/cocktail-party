@@ -50,7 +50,7 @@ export default function IngredientDropdown({ onIngredientSelect }: IngredientDro
     if (onIngredientSelect) {
       onIngredientSelect(ingredient);
     }
-  }, [ingredients]);
+  }, [onIngredientSelect]);
 
   if (loading) {
     return (
