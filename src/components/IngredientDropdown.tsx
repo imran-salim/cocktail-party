@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 
 interface Ingredient {
   strIngredient1: string;
@@ -44,13 +44,13 @@ export default function IngredientDropdown({ onIngredientSelect }: IngredientDro
     );
   }, [ingredients]);
 
-  const handleIngredientChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleIngredientChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
     const ingredient = event.target.value;
     setSelectedIngredient(ingredient);
     if (onIngredientSelect) {
       onIngredientSelect(ingredient);
     }
-  };
+  }, [onIngredientSelect]);
 
   if (loading) {
     return (

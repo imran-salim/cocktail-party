@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import IngredientDropdown from "@/components/IngredientDropdown";
@@ -21,36 +21,12 @@ export default function Home() {
   
   const { user, logout, addToFavorites, removeFromFavorites, isFavorite } = useAuth();
 
-  const handleToggleFavorite = (cocktail: Cocktail) => {
-    const favoriteData = {
-      idDrink: cocktail.idDrink,
-      strDrink: cocktail.strDrink,
-      strDrinkThumb: cocktail.strDrinkThumb
-    };
-
-    if (isFavorite(cocktail.idDrink)) {
-      removeFromFavorites(cocktail.idDrink);
-    } else {
-      addToFavorites(favoriteData);
-    }
-  };
-
-  const handleIngredientSelect = async (ingredient: string) => {
-    console.log('Selected ingredient:', ingredient);
-    
-    if (!ingredient) {
-      setCocktails([]);
-      setSelectedIngredient('');
-      return;
-    }
-
-    setSelectedIngredient(ingredient);
+  const fetchCocktailsByIngredient = useCallback(async (ingredient: string) => {
     setLoading(true);
-
+    setCocktails([]);
+    
     try {
-      // Fetch cocktails that contain the selected ingredient
       const response = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${encodeURIComponent(ingredient)}`);
-      
       if (!response.ok) {
         throw new Error('Failed to fetch cocktails');
       }
@@ -63,7 +39,29 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  const handleIngredientSelect = useCallback((ingredient: string) => {
+    setSelectedIngredient(ingredient);
+    if (ingredient) {
+      fetchCocktailsByIngredient(ingredient);
+    } else {
+      setCocktails([]);
+    }
+  }, [fetchCocktailsByIngredient]);
+
+  const handleToggleFavorite = useCallback((cocktail: Cocktail) => {
+    if (isFavorite(cocktail.idDrink)) {
+      removeFromFavorites(cocktail.idDrink);
+    } else {
+      const favoriteCocktail = {
+        idDrink: cocktail.idDrink,
+        strDrink: cocktail.strDrink,
+        strDrinkThumb: cocktail.strDrinkThumb
+      };
+      addToFavorites(favoriteCocktail);
+    }
+  }, [isFavorite, addToFavorites, removeFromFavorites]);
 
   const cocktailGrid = useMemo(() => {
     return cocktails.map((cocktail) => (

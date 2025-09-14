@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -9,9 +9,9 @@ import { useAuth } from '@/contexts/AuthContext';
 export default function FavoritesPage() {
   const { user, favorites, removeFromFavorites } = useAuth();
 
-  const handleRemoveFromFavorites = (cocktailId: string) => {
+  const handleRemoveFromFavorites = useCallback((cocktailId: string) => {
     removeFromFavorites(cocktailId);
-  };
+  }, [removeFromFavorites]);
 
   const favoritesGrid = useMemo(() => {
     return favorites.map((cocktail) => (
